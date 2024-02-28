@@ -85,6 +85,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [your-email@example.com](mailto:your-email@example.com)
+Sjoerd Beentjes - [mail@sjoerdbeentjes.nl](mailto:mail@sjoerdbeentjes.nl)
 
-Project Link: [https://github.com/yourusername/ProxyLand](https://github.com/yourusername/ProxyLand)
+Project Link: [https://github.com/sjoerdbeentjes/proxy-land](https://github.com/sjoerdbeentjes/proxy-land)
