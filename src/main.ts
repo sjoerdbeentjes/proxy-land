@@ -4,7 +4,7 @@ type Bindings = Record<string, { transformer: TransformerFunc<any> }>;
 
 export class ProxyLand<T extends Binding> {
   bindings: Bindings;
-  data?: Binding;
+  data: Binding = {};
 
   constructor(data: T) {
     this.bindings = {};

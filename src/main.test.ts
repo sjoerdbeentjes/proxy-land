@@ -18,7 +18,7 @@ describe("ProxyLand", () => {
     proxyLand.bind("#simple", "value");
     expect(document.getElementById("simple")?.textContent).toBe("initial");
 
-    proxyLand.data!.value = "updated";
+    proxyLand.data.value = "updated";
     expect(document.getElementById("simple")?.textContent).toBe("updated");
   });
 
@@ -30,7 +30,7 @@ describe("ProxyLand", () => {
     proxyLand.bind("#nested", (data) => data.nested.value);
     expect(document.getElementById("nested")?.textContent).toBe("initial");
 
-    proxyLand.data!.nested.value = "updated";
+    proxyLand.data.nested.value = "updated";
     expect(document.getElementById("nested")?.textContent).toBe("updated");
   });
 
@@ -42,10 +42,10 @@ describe("ProxyLand", () => {
     proxyLand.bind("#array", (data) => data.list.join(", "));
     expect(document.getElementById("array")?.textContent).toBe("1, 2, 3");
 
-    proxyLand.data!.list.push(4);
+    proxyLand.data.list.push(4);
     expect(document.getElementById("array")?.textContent).toBe("1, 2, 3, 4");
 
-    proxyLand.data!.list.pop();
+    proxyLand.data.list.pop();
     expect(document.getElementById("array")?.textContent).toBe("1, 2, 3");
   });
 
@@ -57,7 +57,7 @@ describe("ProxyLand", () => {
     proxyLand.bind("#array", (data) => data.list.join(", "));
     expect(document.getElementById("array")?.textContent).toBe("1, 2, 3");
 
-    proxyLand.data!.list[1] = 4;
+    proxyLand.data.list[1] = 4;
     expect(document.getElementById("array")?.textContent).toBe("1, 4, 3");
   });
 
@@ -68,7 +68,7 @@ describe("ProxyLand", () => {
 
     proxyLand.bind("#splice", (data) => data.list.join(", "));
 
-    proxyLand.data!.list.splice(1, 2); // should remove elements 2 and 3
+    proxyLand.data.list.splice(1, 2); // should remove elements 2 and 3
     expect(document.getElementById("splice")?.textContent).toBe("1, 4, 5");
   });
 
@@ -79,7 +79,7 @@ describe("ProxyLand", () => {
 
     proxyLand.bind("#shift", (data) => data.list.join(", "));
 
-    proxyLand.data!.list.shift(); // should remove element 1
+    proxyLand.data.list.shift(); // should remove element 1
     expect(document.getElementById("shift")?.textContent).toBe("2, 3");
   });
 });
