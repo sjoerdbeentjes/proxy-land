@@ -79,10 +79,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 Don't forget to give the project a star! Thanks again!
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
 ## Contact
 
 Sjoerd Beentjes - [mail@sjoerdbeentjes.nl](mailto:mail@sjoerdbeentjes.nl)
