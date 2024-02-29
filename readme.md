@@ -24,13 +24,8 @@ npm install proxy-land
 1. **Initialize ProxyLand**
 
 ``` typescript
-const app = new ProxyLand();
-```
-
-1. **Watch Your Data**
-
-``` typescript
-const data = app.watch({
+/* initialize with your data */
+const app = new ProxyLand({
   message: 'Hello, ProxyLand!',
 });
 ```
@@ -65,8 +60,9 @@ Here's a simple example to demonstrate how ProxyLand can be used to bind a `div`
 ``` typescript
 import { ProxyLand } from 'proxy-land';
 
-const app = new ProxyLand();
-const data = app.watch({ message: 'Hello, ProxyLand!' });
+const app = new ProxyLand({
+  message: 'Hello, ProxyLand!'
+});
 
 app.bind('#message', 'message');
 ```

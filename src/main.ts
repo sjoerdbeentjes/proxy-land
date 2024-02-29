@@ -1,23 +1,24 @@
 type Binding = Record<any, any>;
-type TransformerFunc = (data: Binding) => string;
-type Bindings = Record<string, { transformer: TransformerFunc }>;
+type TransformerFunc<T> = (data: T) => string;
+type Bindings = Record<string, { transformer: TransformerFunc<any> }>;
 
-export class ProxyLand {
+export class ProxyLand<T extends Binding> {
   bindings: Bindings;
-  data: Binding;
+  data?: Binding;
 
-  constructor() {
+  constructor(data: T) {
     this.bindings = {};
-    this.data = {};
+
+    this.watch(data);
   }
 
-  bind(elementId: string, arg: string | TransformerFunc): void {
-    let transformer: TransformerFunc;
+  bind(elementId: string, arg: keyof T | TransformerFunc<T>): void {
+    let transformer: TransformerFunc<T>;
 
     if (typeof arg === "string") {
       transformer = (data: Binding): string => String(data[arg]);
     } else {
-      transformer = arg;
+      transformer = arg as TransformerFunc<T>;
     }
 
     this.bindings[elementId] = { transformer };
@@ -25,15 +26,15 @@ export class ProxyLand {
     this.updateDomWithBinding(elementId);
   }
 
-  watch<T extends Binding>(data: T): T {
+  private watch(data: T): T {
     this.data = this.deepProxy(data);
 
-    return this.data as T;
+    return this.data;
   }
 
-  private deepProxy<T extends Binding | any[]>(data: T): T {
+  private deepProxy(data: T): T | any[] {
     if (Array.isArray(data)) {
-      return this.proxyArray(data) as T;
+      return this.proxyArray(data);
     } else if (data !== null && typeof data === "object") {
       const handler: ProxyHandler<T> = {
         set: (target: Binding, property: string, value: any): boolean => {
