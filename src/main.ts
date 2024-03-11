@@ -1,6 +1,9 @@
 type Binding = Record<any, any>;
 type TransformerFunc<T> = (data: T) => string;
-type Bindings = Record<string, { transformer: TransformerFunc<any> }>;
+type Bindings = Record<
+  string,
+  { transformer: TransformerFunc<any>; attribute?: string }
+>;
 
 export class ProxyLand<T extends Binding> {
   bindings: Bindings;
@@ -12,16 +15,33 @@ export class ProxyLand<T extends Binding> {
     this.watch(data);
   }
 
-  bind(elementId: string, arg: keyof T | TransformerFunc<T>): void {
+  bind(
+    targetSpecifier: string,
+    bindingSource: keyof T | TransformerFunc<T>
+  ): void;
+  bind(
+    targetSpecifier: { selector: string; attribute?: string },
+    bindingSource: keyof T | TransformerFunc<T>
+  ): void;
+  bind(targetSpecifier: any, bindingSource: any): void {
+    let elementId: string;
     let transformer: TransformerFunc<T>;
+    let attribute: string | undefined;
 
-    if (typeof arg === "string") {
-      transformer = (data: Binding): string => String(data[arg]);
+    if (typeof targetSpecifier === "object") {
+      elementId = targetSpecifier.selector;
+      attribute = targetSpecifier.attribute;
     } else {
-      transformer = arg as TransformerFunc<T>;
+      elementId = targetSpecifier;
     }
 
-    this.bindings[elementId] = { transformer };
+    if (typeof bindingSource === "string") {
+      transformer = (data: Binding): string => String(data[bindingSource]);
+    } else {
+      transformer = bindingSource as TransformerFunc<T>;
+    }
+
+    this.bindings[elementId] = { transformer, attribute };
 
     this.updateDomWithBinding(elementId);
   }
@@ -105,14 +125,18 @@ export class ProxyLand<T extends Binding> {
     }
   }
 
-  updateDomWithBinding(elementSelector: string) {
+  private updateDomWithBinding(elementSelector: string) {
     const binding = this.bindings[elementSelector];
     const element = document.querySelector(elementSelector);
 
     if (element) {
       const newValue = binding.transformer(this.data);
 
-      element.textContent = newValue;
+      if (binding.attribute) {
+        element.setAttribute(binding.attribute, newValue);
+      } else {
+        element.textContent = newValue;
+      }
     }
   }
 }

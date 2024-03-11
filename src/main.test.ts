@@ -82,4 +82,63 @@ describe("ProxyLand", () => {
     proxyLand.data.list.shift(); // should remove element 1
     expect(document.getElementById("shift")?.textContent).toBe("2, 3");
   });
+
+  it("updates DOM element's attribute when simple object properties change", () => {
+    document.body.innerHTML = `<div id="attr-simple" data-test="initial"></div>`;
+    const data = { value: "initial" };
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(
+      { selector: "#attr-simple", attribute: "data-test" },
+      "value"
+    );
+    expect(
+      document.getElementById("attr-simple")?.getAttribute("data-test")
+    ).toBe("initial");
+
+    proxyLand.data.value = "updated";
+    expect(
+      document.getElementById("attr-simple")?.getAttribute("data-test")
+    ).toBe("updated");
+  });
+
+  it("updates input element's value when data changes", () => {
+    document.body.innerHTML = `<input id="input-value" value="initial" />`;
+    const data = { inputValue: "initial" };
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(
+      { selector: "#input-value", attribute: "value" },
+      "inputValue"
+    );
+
+    expect(
+      (document.getElementById("input-value") as HTMLInputElement)?.value
+    ).toBe("initial");
+
+    proxyLand.data.inputValue = "updated";
+
+    expect(
+      (document.getElementById("input-value") as HTMLInputElement)?.value
+    ).toBe("updated");
+  });
+
+  it("updates class attribute when object properties change", () => {
+    document.body.innerHTML = `<div id="class-change" class="initialClass"></div>`;
+    const data = { className: "initialClass" };
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(
+      { selector: "#class-change", attribute: "class" },
+      "className"
+    );
+    expect(document.getElementById("class-change")?.className).toBe(
+      "initialClass"
+    );
+
+    proxyLand.data.className = "updatedClass";
+    expect(document.getElementById("class-change")?.className).toBe(
+      "updatedClass"
+    );
+  });
 });
