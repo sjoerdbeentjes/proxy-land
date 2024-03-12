@@ -141,4 +141,24 @@ describe("ProxyLand", () => {
       "updatedClass"
     );
   });
+
+  it("removes attribute when data property is null", () => {
+    document.body.innerHTML = `<div id="remove-attr" data-test="initial"></div>`;
+    const data = { value: "initial" };
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(
+      { selector: "#remove-attr", attribute: "data-test" },
+      "value"
+    );
+    expect(
+      document.getElementById("remove-attr")?.getAttribute("data-test")
+    ).toBe("initial");
+
+    proxyLand.data.value = null;
+
+    expect(
+      document.getElementById("remove-attr")?.hasAttribute("data-test")
+    ).toBe(false);
+  });
 });

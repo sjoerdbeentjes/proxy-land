@@ -21,7 +21,7 @@ npm install proxy-land
 
 ### Usage
 
-1. **Initialize ProxyLand**
+#### Initialize
 
 ``` typescript
 /* initialize with your data */
@@ -30,7 +30,7 @@ const app = new ProxyLand({
 });
 ```
 
-1. **Bind DOM Elements**
+#### Bind DOM Elements
 
 ``` typescript
 /* direct property binding */
@@ -38,16 +38,23 @@ app.bind('#message', 'message');
 
 /* custom transformer function, for computed properties */
 app.bind('#message', data => data.message.toUpperCase());
+```
 
-/* attribute binding */
+#### Bind DOM Elements with Attribute
+
+``` typescript
+/* set value of an attribute */
 app.bind({
   selector: '#menu',
   attribute: 'style'
 }, data => data.showMenu ? 'display: block' : 'display: none');
 
+/* toggle an attribute ('null' results in the attribute not being rendered) */
+app.bind({
+  selector: '#menu',
+  attribute: 'hidden'
+}, data => data.showMenu ? null : '');
 ```
-
-This binds the `#message` DOM element to the `message` property in your data, ensuring the element updates whenever the data changes.
 
 ## API Reference
 

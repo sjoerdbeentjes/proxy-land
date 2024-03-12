@@ -1,5 +1,5 @@
 type Binding = Record<any, any>;
-type TransformerFunc<T> = (data: T) => string;
+type TransformerFunc<T> = (data: T) => string | null;
 type Bindings = Record<
   string,
   { transformer: TransformerFunc<any>; attribute?: string }
@@ -36,7 +36,7 @@ export class ProxyLand<T extends Binding> {
     }
 
     if (typeof bindingSource === "string") {
-      transformer = (data: Binding): string => String(data[bindingSource]);
+      transformer = (data: Binding): string => data[bindingSource];
     } else {
       transformer = bindingSource as TransformerFunc<T>;
     }
@@ -132,8 +132,16 @@ export class ProxyLand<T extends Binding> {
     if (element) {
       const newValue = binding.transformer(this.data);
 
+      console.log(newValue);
+
       if (binding.attribute) {
-        element.setAttribute(binding.attribute, newValue);
+        if (newValue === null) {
+          // if newValue is null, remove the attribute
+          element.removeAttribute(binding.attribute);
+        } else {
+          // otherwise, set the attribute to a string representation of newValue
+          element.setAttribute(binding.attribute, String(newValue));
+        }
       } else {
         element.textContent = newValue;
       }
