@@ -127,24 +127,24 @@ export class ProxyLand<T extends Binding> {
 
   private updateDomWithBinding(elementSelector: string) {
     const binding = this.bindings[elementSelector];
-    const element = document.querySelector(elementSelector);
+    const elements = document.querySelectorAll(elementSelector);
 
-    if (element) {
-      const newValue = binding.transformer(this.data);
+    elements.forEach((element) => {
+      if (element) {
+        const newValue = binding.transformer(this.data);
 
-      console.log(newValue);
-
-      if (binding.attribute) {
-        if (newValue === null) {
-          // if newValue is null, remove the attribute
-          element.removeAttribute(binding.attribute);
+        if (binding.attribute) {
+          if (newValue === null) {
+            // if newValue is null, remove the attribute
+            element.removeAttribute(binding.attribute);
+          } else {
+            // otherwise, set the attribute to a string representation of newValue
+            element.setAttribute(binding.attribute, String(newValue));
+          }
         } else {
-          // otherwise, set the attribute to a string representation of newValue
-          element.setAttribute(binding.attribute, String(newValue));
+          element.textContent = newValue;
         }
-      } else {
-        element.textContent = newValue;
       }
-    }
+    })
   }
 }
