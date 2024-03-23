@@ -1,15 +1,24 @@
 type Binding = Record<any, any>;
+
 type TransformerFunc<T> = (data: T) => string | null;
+
 type Bindings = Record<
   string,
   { transformer: TransformerFunc<any>; attribute?: string }
 >;
 
+type ProxyLandOptions = {
+  root: Document | HTMLElement | ShadowRoot;
+}
+
 export class ProxyLand<T extends Binding> {
   bindings: Bindings;
   data: Binding = {};
+  root: ProxyLandOptions["root"];
 
-  constructor(data: T) {
+  constructor(data: T, options?: ProxyLandOptions) {
+    this.root = options?.root || document;
+
     this.bindings = {};
 
     this.watch(data);
@@ -127,7 +136,7 @@ export class ProxyLand<T extends Binding> {
 
   private updateDomWithBinding(elementSelector: string) {
     const binding = this.bindings[elementSelector];
-    const elements = document.querySelectorAll(elementSelector);
+    const elements = this.root.querySelectorAll(elementSelector);
 
     elements.forEach((element) => {
       if (element) {

@@ -161,4 +161,42 @@ describe("ProxyLand", () => {
       document.getElementById("remove-attr")?.hasAttribute("data-test")
     ).toBe(false);
   });
+
+  it("works with element as root", () => {
+    document.body.innerHTML = `<div id="custom-root"><div id="custom-root-value"></div></div>`;
+
+    const customRoot = document.querySelector("#custom-root");
+
+    const data = { value: "initial" };
+
+    const proxyLand = new ProxyLand(data, {
+      root: customRoot as HTMLElement
+    });
+
+    proxyLand.bind("#custom-root-value", "value");
+
+    proxyLand.data.value = "updated";
+
+    expect(customRoot?.querySelector("#custom-root-value")?.textContent).toBe("updated");
+  });
+
+  it("works with shadow root", () => {
+    document.body.innerHTML = `<div id="shadow-root"></div>`;
+
+    const shadowRoot = document.querySelector("#shadow-root")?.attachShadow({ mode: "open" });
+
+    shadowRoot?.appendChild(document.createElement("span"));
+
+    const data = { value: "initial" };
+
+    const proxyLand = new ProxyLand(data, {
+      root: shadowRoot as ShadowRoot
+    });
+
+    proxyLand.bind("span", "value");
+
+    proxyLand.data.value = "updated";
+
+    expect(shadowRoot?.firstChild?.textContent).toBe("updated");
+  })
 });

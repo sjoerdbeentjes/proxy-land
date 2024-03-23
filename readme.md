@@ -58,6 +58,20 @@ app.bind({
 
 ## API Reference
 
+### Options
+
+| Option    | Description |
+| -------- | ------- |
+| `root`  | Root element to use for binding. If not provided, the document will be used. |
+
+Options can be passed as an object to the `ProxyLand` constructor.
+
+``` typescript
+const app = new ProxyLand(data, options);
+```
+
+### Methods
+
 - **`bind(targetSpecifier: string | { selector: string; attribute?: string }, bindingSource: keyof T | TransformerFunc<T>): void`**
   Binds a DOM element specified by a selector or a selector-attribute combination to a data property or a custom transformer function. The `targetSpecifier` can either be a string representing the selector of the DOM element or an object containing both the selector and an optional attribute. The `bindingSource` is either the key of a property within the data being observed or a transformer function that processes the data and returns a string to be bound to the target element.
 - **`watch<T extends Binding>(data: T): T`**
