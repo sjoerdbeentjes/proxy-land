@@ -199,4 +199,53 @@ describe("ProxyLand", () => {
 
     expect(shadowRoot?.firstChild?.textContent).toBe("updated");
   })
+
+  it("accepts single native DOM elements as selectors", () => {
+    document.body.innerHTML = `<div id="native-element"></div>`;
+
+    const data = { value: "initial" };
+
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(
+      document.querySelector("#native-element") as HTMLElement,
+      "value"
+    );
+
+    expect(document.querySelector("#native-element")?.textContent).toBe(
+      "initial"
+    );
+
+    proxyLand.data.value = "updated";
+
+    expect(document.querySelector("#native-element")?.textContent).toBe(
+      "updated"
+    );
+  });
+
+  it("accepts multiple native DOM elements as selectors", () => {
+    document.body.innerHTML = `<div class="native-element"></div><div class="native-element"></div>`;
+
+    const data = { value: "initial" };
+
+    const proxyLand = new ProxyLand(data);
+
+    proxyLand.bind(document.querySelectorAll(".native-element"), "value");
+
+    expect(document.querySelectorAll(".native-element")[0]?.textContent).toBe(
+      "initial"
+    );
+    expect(document.querySelectorAll(".native-element")[1]?.textContent).toBe(
+      "initial"
+    );
+
+    proxyLand.data.value = "updated";
+
+    expect(document.querySelectorAll(".native-element")[0]?.textContent).toBe(
+      "updated"
+    );
+    expect(document.querySelectorAll(".native-element")[1]?.textContent).toBe(
+      "updated"
+    );
+  });
 });

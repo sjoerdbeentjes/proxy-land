@@ -72,8 +72,8 @@ const app = new ProxyLand(data, options);
 
 ### Methods
 
-- **`bind(targetSpecifier: string | { selector: string; attribute?: string }, bindingSource: keyof T | TransformerFunc<T>): void`**
-  Binds a DOM element specified by a selector or a selector-attribute combination to a data property or a custom transformer function. The `targetSpecifier` can either be a string representing the selector of the DOM element or an object containing both the selector and an optional attribute. The `bindingSource` is either the key of a property within the data being observed or a transformer function that processes the data and returns a string to be bound to the target element.
+- **`bind(targetSpecifier: string | Element | NodeListOf<Element> | { selector: string | Element | NodeListOf<Element>; attribute?: string }, bindingSource: keyof T | TransformerFunc<T>): void`**
+  Binds a DOM element specified by a selector or a selector-attribute combination to a data property or a custom transformer function. The `targetSpecifier` can either be a selector of the DOM element or an object containing both the selector and an optional attribute. The `bindingSource` is either the key of a property within the data being observed or a transformer function that processes the data and returns a string to be bound to the target element.
 - **`watch<T extends Binding>(data: T): T`**
   Watches an object or array for changes, making it reactive. This method returns a proxy of the original data, where any modifications to the data will trigger the DOM to update accordingly. It is designed to handle both objects and arrays, ensuring deep reactivity by applying proxies recursively.
 

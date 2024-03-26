@@ -1,58 +1,65 @@
-type Binding = Record<any, any>;
+type Selector = string | Element | NodeListOf<Element> | null;
+
+type Data = Record<any, any>;
 
 type TransformerFunc<T> = (data: T) => string | null;
 
-type Bindings = Record<
-  string,
-  { transformer: TransformerFunc<any>; attribute?: string }
->;
+type Binding = {
+  selector: Selector;
+  transformer: TransformerFunc<any>;
+  attribute?: string;
+};
+
+type Bindings = Array<Binding>;
+
+type Root = Document | Element | ShadowRoot;
 
 type ProxyLandOptions = {
-  root: Document | HTMLElement | ShadowRoot;
-}
+  root: Root;
+};
 
-export class ProxyLand<T extends Binding> {
-  bindings: Bindings;
-  data: Binding = {};
+export class ProxyLand<T extends Data> {
+  bindings: Bindings = [];
+  data: Data = {};
   root: ProxyLandOptions["root"];
 
   constructor(data: T, options?: ProxyLandOptions) {
     this.root = options?.root || document;
 
-    this.bindings = {};
-
     this.watch(data);
   }
 
   bind(
-    targetSpecifier: string,
+    targetSpecifier: Selector,
     bindingSource: keyof T | TransformerFunc<T>
   ): void;
   bind(
-    targetSpecifier: { selector: string; attribute?: string },
+    targetSpecifier: { selector: Selector; attribute?: string },
     bindingSource: keyof T | TransformerFunc<T>
   ): void;
   bind(targetSpecifier: any, bindingSource: any): void {
-    let elementId: string;
+    let selector: string;
     let transformer: TransformerFunc<T>;
     let attribute: string | undefined;
 
-    if (typeof targetSpecifier === "object") {
-      elementId = targetSpecifier.selector;
+    if (targetSpecifier.selector) {
+      selector = targetSpecifier.selector;
       attribute = targetSpecifier.attribute;
     } else {
-      elementId = targetSpecifier;
+      selector = targetSpecifier;
     }
 
     if (typeof bindingSource === "string") {
-      transformer = (data: Binding): string => data[bindingSource];
+      transformer = (data: Data): string => data[bindingSource];
     } else {
       transformer = bindingSource as TransformerFunc<T>;
     }
 
-    this.bindings[elementId] = { transformer, attribute };
+    const binding = { selector, transformer, attribute };
 
-    this.updateDomWithBinding(elementId);
+    this.bindings.push(binding);
+
+    this.updateDomWithBinding(binding);
   }
 
   private watch(data: T): T {
@@ -66,7 +73,7 @@ export class ProxyLand<T extends Binding> {
       return this.proxyArray(data);
     } else if (data !== null && typeof data === "object") {
       const handler: ProxyHandler<T> = {
-        set: (target: Binding, property: string, value: any): boolean => {
+        set: (target: Data, property: string, value: any): boolean => {
           target[property] =
             Array.isArray(value) || typeof value === "object"
               ? this.deepProxy(value)
@@ -129,16 +136,15 @@ export class ProxyLand<T extends Binding> {
   }
 
   updateDom() {
-    for (const elementSelector in this.bindings) {
-      this.updateDomWithBinding(elementSelector);
-    }
+    this.bindings.forEach((binding) => {
+      this.updateDomWithBinding(binding);
+    });
   }
 
-  private updateDomWithBinding(elementSelector: string) {
-    const binding = this.bindings[elementSelector];
-    const elements = this.root.querySelectorAll(elementSelector);
+  private updateDomWithBinding(binding: Binding) {
+    const elements = getElementsForSelector(binding.selector, this.root);
 
-    elements.forEach((element) => {
+    elements?.forEach((element) => {
       if (element) {
         const newValue = binding.transformer(this.data);
 
@@ -154,6 +160,21 @@ export class ProxyLand<T extends Binding> {
           element.textContent = newValue;
         }
       }
-    })
+    });
   }
+}
+
+function getElementsForSelector(
+  selector: Selector,
+  root: Root
+): NodeListOf<Element> | Array<Element> | null {
+  if (typeof selector === "string") {
+    return root.querySelectorAll(selector);
+  }
+
+  if (selector instanceof Element) {
+    return [selector];
+  }
+
+  return selector;
 }
